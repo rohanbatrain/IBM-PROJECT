@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength & Breach Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Password Strength & Breach Detection</h1>
+    <input type="password" id="password" placeholder="Enter Password">
+    <button id="togglePassword">Show Password</button>
+    <button onclick="analyzePassword()">Analyze Password</button>
+
+    <div class="meter">
+        <div id="strengthBar"></div>
+    </div>
+
+    <div class="result">
+        <h2>Analysis</h2>
+        <p><strong>Score :</strong> <span id="score">-</span></p>
+        <p><strong>Strength :</strong> <span id="strength">-</span></p>
+        <p><strong>Entropy :</strong> <span id="entropy">-</span></p>
+        <p><strong>Estimated Crack Time :</strong> <span id="crackTime">-</span></p>
+        <p><strong>Breach Status :</strong> <span id="breach">-</span></p>
+        <p><strong>Breach Count :</strong> <span id="count">-</span></p>
+        <h3>Suggestions</h3>
+        <ul id="suggestions"></ul>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
