@@ -60,6 +60,12 @@ jobs:
           curl -sf -X POST http://127.0.0.1:5099/analyze \
             -H 'Content-Type: application/json' -d '{"password":"Test1234!"}' > /dev/null
 
+      # electron-builder ships an x86-only fpm, which cannot run on arm64
+      # runners. Use the distro's fpm there so .deb packaging works.
+      - name: Install fpm for Linux packaging
+        if: runner.os == 'Linux'
+        run: sudo gem install --no-document fpm
+
       - name: Install Node dependencies
         run: npm ci
 
@@ -67,6 +73,7 @@ jobs:
       - name: Build Electron app
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          USE_SYSTEM_FPM: ${{ runner.os == 'Linux' && 'true' || 'false' }}
         run: npx electron-builder ${{ matrix.builder }} --publish never
 
       - uses: actions/upload-artifact@v4

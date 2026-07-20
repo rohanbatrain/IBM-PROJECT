@@ -37,14 +37,21 @@
       {
         "from": "dist",
         "to": "backend",
-        "filter": ["password-analyzer", "password-analyzer.exe"]
+        "filter": [
+          "password-analyzer",
+          "password-analyzer.exe"
+        ]
       }
     ],
     "mac": {
       "category": "public.app-category.utilities",
       "target": [
-        { "target": "dmg", "arch": ["arm64", "x64"] },
-        { "target": "zip", "arch": ["arm64", "x64"] }
+        {
+          "target": "dmg"
+        },
+        {
+          "target": "zip"
+        }
       ],
       "identity": null,
       "hardenedRuntime": false,
@@ -55,8 +62,12 @@
     },
     "win": {
       "target": [
-        { "target": "nsis", "arch": ["x64"] },
-        { "target": "portable", "arch": ["x64"] }
+        {
+          "target": "nsis"
+        },
+        {
+          "target": "portable"
+        }
       ],
       "signAndEditExecutable": true
     },
@@ -69,8 +80,12 @@
     "linux": {
       "category": "Utility",
       "target": [
-        { "target": "AppImage", "arch": ["x64", "arm64"] },
-        { "target": "deb", "arch": ["x64", "arm64"] }
+        {
+          "target": "AppImage"
+        },
+        {
+          "target": "deb"
+        }
       ],
       "maintainer": "Password Analyzer"
     }
