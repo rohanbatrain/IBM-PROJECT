@@ -1,0 +1,81 @@
+name: Build desktop apps
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: linux-x64
+            builder: --linux --x64
+          - os: ubuntu-24.04-arm
+            label: linux-arm64
+            builder: --linux --arm64
+          - os: windows-latest
+            label: windows-x64
+            builder: --win --x64
+          - os: macos-13
+            label: macos-x64
+            builder: --mac --x64
+          - os: macos-14
+            label: macos-arm64
+            builder: --mac --arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run backend tests
+        run: python -m unittest discover -p 'test_*.py'
+
+      - name: Build backend binary
+        run: pyinstaller --clean --noconfirm password-analyzer.spec
+
+      - name: Smoke test backend
+        if: runner.os != 'Windows'
+        run: |
+          NO_BROWSER=1 PORT=5099 ./dist/password-analyzer &
+          for i in $(seq 1 40); do curl -sf http://127.0.0.1:5099/ >/dev/null && break; sleep 0.5; done
+          curl -sf -X POST http://127.0.0.1:5099/analyze \
+            -H 'Content-Type: application/json' -d '{"password":"Test1234!"}' > /dev/null
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      # Dev build: unsigned by design, so no certificates or notarization secrets.
+      - name: Build Electron app
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder ${{ matrix.builder }} --publish never
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PasswordAnalyzer-${{ matrix.label }}
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.exe
+            release/*.AppImage
+            release/*.deb
+          if-no-files-found: error

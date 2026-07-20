@@ -1,35 +1,67 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Strength & Breach Detection</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Strength &amp; Breach Detection</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23175DDC' d='M12 1 3 5v6c0 5.6 3.8 10.7 9 12 5.2-1.3 9-6.4 9-12V5z'/></svg>">
 </head>
 <body>
-<div class="container">
-    <h1>Password Strength & Breach Detection</h1>
-    <input type="password" id="password" placeholder="Enter Password">
-    <button id="togglePassword">Show Password</button>
-    <button onclick="analyzePassword()">Analyze Password</button>
 
-    <div class="meter">
-        <div id="strengthBar"></div>
+<header class="topbar">
+  <div class="brand">
+    <svg class="shield" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 3 5v6c0 5.6 3.8 10.7 9 12 5.2-1.3 9-6.4 9-12V5z"/></svg>
+    <span>Password&nbsp;Analyzer</span>
+  </div>
+  <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+
+<main class="wrap">
+  <section class="card intro">
+    <h1>Check your password strength</h1>
+    <p class="muted">Scored locally and checked against known data breaches. Your password is never sent — only the first five characters of its hash leave this device.</p>
+  </section>
+
+  <section class="card">
+    <label class="label" for="password">Master password</label>
+    <div class="field">
+      <input type="password" id="password" placeholder="Type a password" autocomplete="off" spellcheck="false" autofocus>
+      <button id="togglePassword" class="icon-btn ghost" type="button" aria-label="Show password">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-5 0-9 4.5-11 7 2 2.5 6 7 11 7s9-4.5 11-7c-2-2.5-6-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>
+      </button>
     </div>
 
-    <div class="result">
-        <h2>Analysis</h2>
-        <p><strong>Score :</strong> <span id="score">-</span></p>
-        <p><strong>Strength :</strong> <span id="strength">-</span></p>
-        <p><strong>Entropy :</strong> <span id="entropy">-</span></p>
-        <p><strong>Estimated Crack Time :</strong> <span id="crackTime">-</span></p>
-        <p><strong>Breach Status :</strong> <span id="breach">-</span></p>
-        <p><strong>Breach Count :</strong> <span id="count">-</span></p>
-        <h3>Suggestions</h3>
-        <ul id="suggestions"></ul>
+    <div class="meter" role="progressbar" aria-labelledby="strength">
+      <span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
     </div>
-</div>
+    <div class="meter-row">
+      <strong id="strength">—</strong>
+      <span class="muted" id="score">0 / 100</span>
+    </div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+    <p id="error" class="banner danger" hidden></p>
+  </section>
+
+  <section class="card results" id="results" hidden>
+    <div id="breachBanner" class="banner" hidden></div>
+
+    <div class="stats">
+      <div class="stat"><span class="muted">Entropy</span><strong id="entropy">—</strong></div>
+      <div class="stat"><span class="muted">Estimated crack time</span><strong id="crackTime">—</strong></div>
+    </div>
+
+    <div id="suggestionBlock">
+      <h2>Suggestions</h2>
+      <ul id="suggestions"></ul>
+    </div>
+  </section>
+</main>
+
+<footer class="foot muted">Breach data by <a href="https://haveibeenpwned.com" target="_blank" rel="noopener">Have I Been Pwned</a> · runs entirely on your machine</footer>
+
+<script defer src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
